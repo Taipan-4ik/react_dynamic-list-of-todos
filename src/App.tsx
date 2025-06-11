@@ -14,13 +14,17 @@ export const App: React.FC = () => {
   const [todos, setTodos] = useState<Todo[]>([]);
   const [visibleTodos, setVisibleTodos] = useState<Todo[]>([]);
   const [eyeWasPressed, setEyeWasPressed] = useState(false);
-  const [choisedTodo, setChoisedTodo] = useState<Todo | null>(null);
+  const [chosenTodo, setChosenTodo] = useState<Todo | null>(null);
+  const [todoIsLoading, setTodoIsLoading] = useState(false);
 
   useEffect(() => {
-    getTodos().then(fetchedTodos => {
-      setTodos(fetchedTodos);
-      setVisibleTodos(fetchedTodos);
-    });
+    setTodoIsLoading(true);
+    getTodos()
+      .then(fetchedTodos => {
+        setTodos(fetchedTodos);
+        setVisibleTodos(fetchedTodos);
+      })
+      .finally(() => setTodoIsLoading(false));
   }, []);
 
   return (
@@ -35,12 +39,12 @@ export const App: React.FC = () => {
             </div>
 
             <div className="block">
-              {!visibleTodos.length && <Loader />}
+              {todoIsLoading && <Loader />}
               <TodoList
                 eyeWasPressed={eyeWasPressed}
                 visibleTodos={visibleTodos}
                 setEyeWasPressed={setEyeWasPressed}
-                setChoisedTodo={setChoisedTodo}
+                setChosenTodo={setChosenTodo}
               />
             </div>
           </div>
@@ -50,8 +54,8 @@ export const App: React.FC = () => {
       {eyeWasPressed && (
         <TodoModal
           setEyeWasPressed={setEyeWasPressed}
-          choisedTodo={choisedTodo}
-          setChoisedTodo={setChoisedTodo}
+          chosenTodo={chosenTodo}
+          setChosenTodo={setChosenTodo}
         />
       )}
     </>

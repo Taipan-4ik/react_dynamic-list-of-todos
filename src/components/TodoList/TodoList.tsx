@@ -4,14 +4,14 @@ import { Todo } from '../../types/Todo';
 type TodoListProps = {
   setEyeWasPressed: (val: boolean) => void;
   visibleTodos: Todo[];
-  setChoisedTodo: (todo: Todo) => void;
+  setChosenTodo: (todo: Todo) => void;
   eyeWasPressed: boolean;
 };
 
 export const TodoList: React.FC<TodoListProps> = ({
   visibleTodos,
   setEyeWasPressed,
-  setChoisedTodo,
+  setChosenTodo,
 }) => {
   return (
     <table className="table is-narrow is-fullwidth">
@@ -55,7 +55,7 @@ export const TodoList: React.FC<TodoListProps> = ({
                   className="button"
                   type="button"
                   onClick={ev => {
-                    setChoisedTodo(todo);
+                    setChosenTodo(todo);
                     setEyeWasPressed(true);
 
                     const pressedButton = ev.currentTarget as HTMLButtonElement;

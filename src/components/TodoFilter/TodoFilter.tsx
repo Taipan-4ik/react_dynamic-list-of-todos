@@ -14,22 +14,34 @@ export const TodoFilter: React.FC<TodoFilterProps> = ({
   const [selectedFilter, setSelectedFilter] = useState('all');
 
   useEffect(() => {
-    const normalizeQuery = inputValue.toLocaleLowerCase();
+    const normalizeQuery = inputValue.toLowerCase();
 
-    if (selectedFilter === 'all') {
-      setVisibleTodos(
-        todos.filter(todo =>
-          todo.title.toLocaleLowerCase().includes(normalizeQuery),
-        ),
-      );
-    } else {
-      setVisibleTodos(
-        todos.filter(
-          todo =>
-            todo.title.toLocaleLowerCase().includes(normalizeQuery) &&
-            todo.completed === (selectedFilter === 'completed'),
-        ),
-      );
+    switch (selectedFilter) {
+      case 'all':
+        setVisibleTodos(
+          todos.filter(todo =>
+            todo.title.toLowerCase().includes(normalizeQuery),
+          ),
+        );
+        break;
+      case 'active':
+        setVisibleTodos(
+          todos.filter(
+            todo =>
+              todo.title.toLowerCase().includes(normalizeQuery) &&
+              todo.completed !== true,
+          ),
+        );
+        break;
+      case 'completed':
+        setVisibleTodos(
+          todos.filter(
+            todo =>
+              todo.title.toLowerCase().includes(normalizeQuery) &&
+              todo.completed !== false,
+          ),
+        );
+        break;
     }
   }, [inputValue, selectedFilter, setVisibleTodos, todos]);
 

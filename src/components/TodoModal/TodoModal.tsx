@@ -6,28 +6,28 @@ import { User } from '../../types/User';
 
 type TodoModalProps = {
   setEyeWasPressed: (val: boolean) => void;
-  choisedTodo?: Todo | null;
-  setChoisedTodo: (val: Todo | null) => void;
+  chosenTodo?: Todo | null;
+  setChosenTodo: (val: Todo | null) => void;
 };
 
 export const TodoModal: React.FC<TodoModalProps> = ({
   setEyeWasPressed,
-  choisedTodo,
-  setChoisedTodo,
+  chosenTodo,
+  setChosenTodo,
 }) => {
   const [selectedUser, setSelectedUser] = useState<User | null>(null);
   const [isLoadingUser, setIsLoadingUser] = useState(false);
 
   useEffect(() => {
-    if (!choisedTodo) {
+    if (!chosenTodo) {
       return;
     }
 
     setIsLoadingUser(true);
-    getUser(choisedTodo.userId)
+    getUser(chosenTodo.userId)
       .then(user => setSelectedUser(user))
       .finally(() => setIsLoadingUser(false));
-  }, [choisedTodo]);
+  }, [chosenTodo]);
 
   return isLoadingUser ? (
     <div className="modal is-active" data-cy="modal">
@@ -43,7 +43,7 @@ export const TodoModal: React.FC<TodoModalProps> = ({
             className="modal-card-title has-text-weight-medium"
             data-cy="modal-header"
           >
-            {`Todo #${choisedTodo?.id}`}
+            {`Todo #${chosenTodo?.id}`}
           </div>
 
           {/* eslint-disable-next-line jsx-a11y/control-has-associated-label */}
@@ -53,7 +53,7 @@ export const TodoModal: React.FC<TodoModalProps> = ({
             data-cy="modal-close"
             onClick={() => {
               setEyeWasPressed(false);
-              setChoisedTodo(null);
+              setChosenTodo(null);
 
               const slashEye = document.querySelector(
                 '.fa-eye-slash',
@@ -67,17 +67,17 @@ export const TodoModal: React.FC<TodoModalProps> = ({
 
         <div className="modal-card-body">
           <p className="block" data-cy="modal-title">
-            {choisedTodo?.title}
+            {chosenTodo?.title}
           </p>
 
           <p className="block" data-cy="modal-user">
             {/* <strong className="has-text-success">Done</strong> */}
             <strong
               className={
-                choisedTodo?.completed ? 'has-text-success' : 'has-text-danger'
+                chosenTodo?.completed ? 'has-text-success' : 'has-text-danger'
               }
             >
-              {choisedTodo?.completed ? 'Done' : 'Planned'}
+              {chosenTodo?.completed ? 'Done' : 'Planned'}
             </strong>
 
             {' by '}
