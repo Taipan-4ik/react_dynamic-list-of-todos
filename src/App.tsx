@@ -8,14 +8,16 @@ import { TodoFilter } from './components/TodoFilter';
 import { TodoModal } from './components/TodoModal';
 import { Loader } from './components/Loader';
 import { Todo } from './types/Todo';
-import { getTodosFromServer } from './services/todosFromServer';
+import { getTodos } from './api';
 
 export const App: React.FC = () => {
   const [todos, setTodos] = useState<Todo[]>([]);
   const [visibleTodos, setVisibleTodos] = useState<Todo[]>([]);
+  const [eyeWasPressed, setEyeWasPressed] = useState(false);
+  const [choisedTodo, setChoisedTodo] = useState<Todo | null>(null);
 
   useEffect(() => {
-    getTodosFromServer().then(fetchedTodos => {
+    getTodos().then(fetchedTodos => {
       setTodos(fetchedTodos);
       setVisibleTodos(fetchedTodos);
     });
@@ -29,21 +31,29 @@ export const App: React.FC = () => {
             <h1 className="title">Todos:</h1>
 
             <div className="block">
-              <TodoFilter
-                visibleTodos={todos}
-                setVisibleTodos={setVisibleTodos}
-              />
+              <TodoFilter todos={todos} setVisibleTodos={setVisibleTodos} />
             </div>
 
             <div className="block">
-              {/* <Loader /> */}
-              <TodoList visibleTodos={visibleTodos} />
+              {!visibleTodos.length && <Loader />}
+              <TodoList
+                eyeWasPressed={eyeWasPressed}
+                visibleTodos={visibleTodos}
+                setEyeWasPressed={setEyeWasPressed}
+                setChoisedTodo={setChoisedTodo}
+              />
             </div>
           </div>
         </div>
       </div>
 
-      {/* <TodoModal /> */}
+      {eyeWasPressed && (
+        <TodoModal
+          setEyeWasPressed={setEyeWasPressed}
+          choisedTodo={choisedTodo}
+          setChoisedTodo={setChoisedTodo}
+        />
+      )}
     </>
   );
 };

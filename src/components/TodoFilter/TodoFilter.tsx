@@ -1,28 +1,37 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { Todo } from '../../types/Todo';
 
 type TodoFilterProps = {
-  visibleTodos: Todo[];
+  todos: Todo[];
   setVisibleTodos: (todos: Todo[]) => void;
 };
 
 export const TodoFilter: React.FC<TodoFilterProps> = ({
-  visibleTodos,
+  todos,
   setVisibleTodos,
 }) => {
-  function todoFilter(value: string) {
-    switch (value) {
-      case 'all':
-        setVisibleTodos(visibleTodos);
-        break;
-      case 'active':
-        setVisibleTodos(visibleTodos.filter(todo => todo.completed === false));
-        break;
-      case 'completed':
-        setVisibleTodos(visibleTodos.filter(todo => todo.completed === true));
-        break;
+  const [inputValue, setInputValue] = useState('');
+  const [selectedFilter, setSelectedFilter] = useState('all');
+
+  useEffect(() => {
+    const normalizeQuery = inputValue.toLocaleLowerCase();
+
+    if (selectedFilter === 'all') {
+      setVisibleTodos(
+        todos.filter(todo =>
+          todo.title.toLocaleLowerCase().includes(normalizeQuery),
+        ),
+      );
+    } else {
+      setVisibleTodos(
+        todos.filter(
+          todo =>
+            todo.title.toLocaleLowerCase().includes(normalizeQuery) &&
+            todo.completed === (selectedFilter === 'completed'),
+        ),
+      );
     }
-  }
+  }, [inputValue, selectedFilter, setVisibleTodos, todos]);
 
   return (
     <form className="field has-addons">
@@ -31,7 +40,7 @@ export const TodoFilter: React.FC<TodoFilterProps> = ({
           <select
             data-cy="statusSelect"
             onChange={ev => {
-              todoFilter(ev.target.value);
+              setSelectedFilter(ev.target.value);
             }}
           >
             <option value="all">All</option>
@@ -47,6 +56,10 @@ export const TodoFilter: React.FC<TodoFilterProps> = ({
           type="text"
           className="input"
           placeholder="Search..."
+          value={inputValue}
+          onChange={ev => {
+            setInputValue(ev.target.value);
+          }}
         />
         <span className="icon is-left">
           <i className="fas fa-magnifying-glass" />
@@ -54,11 +67,14 @@ export const TodoFilter: React.FC<TodoFilterProps> = ({
 
         <span className="icon is-right" style={{ pointerEvents: 'all' }}>
           {/* eslint-disable-next-line jsx-a11y/control-has-associated-label */}
-          <button
-            data-cy="clearSearchButton"
-            type="button"
-            className="delete"
-          />
+          {inputValue && (
+            <button
+              data-cy="clearSearchButton"
+              type="button"
+              className="delete"
+              onClick={() => setInputValue('')}
+            />
+          )}
         </span>
       </p>
     </form>
